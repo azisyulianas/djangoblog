@@ -24,18 +24,20 @@
                 <ul class="list-group list-group-horizontal-sm">
                     <li class="text-center list-group-item"><a href="/" class="list-group-item-action link-secondary link-underline-light">All</a></li>
                     {% for category in categories %}
-                    <li class="text-center list-group-item"><a href="{% url 'blog:category' category.slug %}" class="list-group-item-action link-secondary link-underline-light">{{ category.name }}</a></li>
+                    <li class="text-center list-group-item"><a href="{% url 'blog:category' category.slug %}" class="list-group-item-action link-secondary link-underline-light text-nowrap">{{ category.name }}</a></li>
                     {% endfor %}
                 </ul>
             </div>
         </div>
     </div>
 </div>
+
 <div class="card">
     <div class="card-header">
         {{ judul }}
     </div>
     <div class="card-body">
+        {% if posts %}
         {% for post in posts %}
         <div class="card mb-2">
             <div class="card-header">
@@ -52,6 +54,9 @@
             </div>
         </div>
         {% endfor %}
+        {% else %}
+        <h1 class="card-text"> Tidak ada Data</h1>
+        {% endif %}
     </div>     
 </div>
 {% endblock konten %}

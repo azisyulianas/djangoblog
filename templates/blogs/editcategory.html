@@ -1,0 +1,20 @@
+{% extends 'layout/base.html' %}
+
+{% block judul %}
+Edit {{ category.name }}
+{% endblock judul %}
+
+{% block konten %}
+<div class="card">
+    <div class="card-header">
+        Edit {{ category.name }}
+    </div>
+    <div class="card-body">
+        <form action="{% url 'blog:editcategory' category.slug %}" method="post">
+            {% csrf_token %}
+            <input type="text" class="form-control" placeholder="Masukan Nama Category" name="name" id="name" value="{{ category.name }}">
+            <input type="submit" value="Change" class="btn btn-outline-secondary">
+        </form>
+    </div>
+</div>
+{% endblock konten %}

@@ -1,7 +1,9 @@
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.views import generic
 from .models import BlogPostModel, CategoryModel
 from django.utils.text import slugify
+from django.db.models import Count
 
 # Create your views here.
 
@@ -12,7 +14,7 @@ class HomeViews(generic.View):
     template_name = "blogs/index.html"
     konten = {
         'judul':f'Posts All',
-        'posts':modelBlog.objects.order_by('createAt').all(),
+        'posts':modelBlog.objects.order_by('createAt'),
         'categories':modelCategory.objects.order_by('name').all()
     }
     
@@ -24,7 +26,7 @@ class HomeViews(generic.View):
             self.konten['judul']=f'Posts by category {kwargs["category"]}'
 
         else:
-            self.konten['posts']=self.modelBlog.objects.order_by('createAt').all()
+            self.konten['posts']=self.modelBlog.objects.order_by('createAt')
             self.konten['judul']='Posts All'
 
         return render(request, self.template_name, context=self.konten)
@@ -95,3 +97,45 @@ def delete(request, slug):
     return redirect("blog:index")
 
 # Blog Views for Category
+class CategoryIndex(generic.View):
+    modelBlog = BlogPostModel
+    modelCategory = CategoryModel
+    template_name = "blogs/category.html"
+    konten = {
+        'judul':f'Summaries Category',
+        'summaries':modelBlog.objects.values('category__name','category__slug')\
+                .annotate(total=Count('id'))\
+                .filter(total__gt=0),
+        'categories':modelCategory.objects.order_by('name').all()
+    }
+
+    def get(self, request, **kwargs):
+        self.konten['categories']=self.modelCategory.objects.order_by('name').all()
+        return render(request, self.template_name, context=self.konten)
+    
+    def post(self, request, *args, **kwargs):
+        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+        if is_ajax:
+            name = request.POST.get('name')
+            category = self.modelCategory(name=name)
+            category.save()
+        return JsonResponse({
+            'message':'Data Berhasil Ditambahkan'
+        })
+    
+class CategoryEdit(generic.View):
+    modelCategory = CategoryModel
+    template_name = "blogs/editcategory.html"
+    konten = {}
+
+    def get(self, request, **kwargs):
+        self.konten['category']=self.modelCategory.objects.get(slug=kwargs['slug'])
+        return render(request, self.template_name, context=self.konten)
+    
+    def post(self, request, **kwargs):
+            name = request.POST.get('name')
+            category = self.modelCategory.objects.get(slug=kwargs['slug'])
+            category.name = name
+            category.save()
+
+            return redirect("blog:indexcategory")

@@ -1,0 +1,113 @@
+{% extends 'layout/base.html' %}
+
+
+{% block judul %}
+{{ judul }}
+{% endblock judul %}
+
+{% block konten %}
+<div class="card mb-3">
+    <div class="card-header">
+        <h5 class="text-center">Category</h5>
+    </div>
+    <div class="card-header navbar navbar-expand-lg justify-content-center">
+        <button class="navbar-toggler mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCategoryContent" aria-controls="navbarCategoryContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div id="navbarCategoryContent" class="collapse navbar-collapse overflow-auto">
+            <div class="mx-auto text-center" style="max-height: 200px;">
+                <ul class="list-group list-group-horizontal-sm">
+                    <li class="text-center list-group-item"><a href="/" class="list-group-item-action link-secondary link-underline-light">All</a></li>
+                    {% for category in categories %}
+                    <li class="text-center list-group-item"><a href="{% url 'blog:category' category.slug %}" class="list-group-item-action link-secondary link-underline-light text-nowrap">{{ category.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">
+        Category Summaries
+    </div>
+    <div class="card-body">
+        <div class="input-group mb-3">
+            {% csrf_token %}
+            <input type="text" class="form-control" placeholder="Masukan Nama Category" name="category" id="category">
+            <button class="btn btn-outline-secondary" type="button" id="save">Tambahkan</button>
+        </div>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Category</th>
+                    <th>Jumlah Post</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for summary in summaries %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><a href="{% url 'blog:category' summary.category__slug %}" class="link-underline-light">{{ summary.category__name }}</a></td>
+                    <td>{{ summary.total }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">
+        All List
+    </div>
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Category</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in categories %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ category.name }}</td>
+                    <td>
+                        <a href="{% url 'blog:editcategory' category.slug %}" class="btn btn-secondary">Edit</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock konten %}
+
+{% block js %}
+<script>
+    $(document).ready(function () {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRFToken': $("input[name=csrfmiddlewaretoken]").val(),
+                "X-Requested-With": "XMLHttpRequest",
+            }
+        });
+        $('#save').click(function (e) { 
+            e.preventDefault();
+            $.ajax({
+                type: "post",
+                url: "{% url 'blog:indexcategory' %}",
+                data: {name:$("#category").val()},
+                dataType: "json",
+                success: function (response) {
+                    alert(response.message)
+                    location.reload();
+                }
+            });
+        });
+    });
+</script>
+            
+{% endblock js %}

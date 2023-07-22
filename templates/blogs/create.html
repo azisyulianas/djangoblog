@@ -3,7 +3,11 @@
 {% load static %}
 
 {% block judul %}
+{% if post %}
+Edit {{ post.title }}
+{% else %}
 {{ judul }}
+{% endif %}
 {% endblock judul %}
 
 {% block css %}
@@ -14,7 +18,11 @@
 {% block konten %}
 <div class="card">
     <div class="card-header">
+        {% if post %}
+        Edit {{ post.title }}
+        {% else %}
         {{ judul }}
+        {% endif %}
     </div>
     <div class="card-body">
         <form action="{% if post %} {% url 'blog:edit' post.slug %} {% else %} {% url 'blog:create' %} {% endif %}" method="post">
