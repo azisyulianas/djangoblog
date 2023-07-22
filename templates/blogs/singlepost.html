@@ -1,0 +1,24 @@
+{% extends 'layout/base.html' %}
+
+
+{% block judul %}
+{{ post.title }}
+{% endblock judul %}
+
+{% block konten %}
+<div class="card">
+    <div class="card-header">
+        <p class="fs-4 fw-bold mb-3">{{ post.title }}</p>
+        <blockquote class="blockquote fs-6">
+            <footer class="blockquote-footer"><cite title="Source Title">{{ post.createAt }}</cite> by <cite title="Source Title">{{ post.author }}</cite> in <cite title="Source Title">{{ post.category.name }}</cite></footer>
+        </blockquote>
+    </div>
+    <div class="card-body">
+        {{ post.text | safe }}
+    </div>
+    <div class="card-footer">
+        <a href="{% url 'blog:edit' post.slug %}" class="btn btn-primary">Edit</a>
+        <a href="{% url 'blog:delete' post.slug %}" class="btn btn-danger" onclick="confirm('Delete Post With Title {{ post.title }}')">Delete</a> 
+    </div>
+</div>
+{% endblock konten %}

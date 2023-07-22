@@ -1,0 +1,62 @@
+{% extends 'layout/base.html' %}
+
+{% load static %}
+
+{% block judul %}
+{{ judul }}
+{% endblock judul %}
+
+{% block css %}
+<!-- summernote -->
+<link rel="stylesheet" href="{% static 'plugins/summernote/summernote-bs4.min.css' %}">
+{% endblock css %}
+
+{% block konten %}
+<div class="card">
+    <div class="card-header">
+        {{ judul }}
+    </div>
+    <div class="card-body">
+        <form action="{% if post %} {% url 'blog:edit' post.slug %} {% else %} {% url 'blog:create' %} {% endif %}" method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="title" class="form-label">Judul Post</label>
+                <input type="text" class="form-control" id="title" name="title" placeholder="Saya Suka Dia" value="{% if post %} {{ post.title }} {% endif %}" required>
+            </div>
+            <div class="mb-3">
+                <label for="category" class="form-label">Category</label>
+                <select name="category" id="category" class="form-select" required>
+                    <option value="None">Pilih Category</option>
+                    {% for category in categories %}
+                    <option value="{{ category.slug }}" {% if post %} {% if category.slug == post.category.slug %} selected {% endif %} {% endif %}>{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <textarea id="summernote" name="text" required>
+                    {% if post %} {{ post.text | safe }} {% endif %}
+                </textarea>
+            </div>
+            <input type="submit" value="Save" class="btn btn-primary">
+
+        </form>
+    </div>
+</div>
+{% endblock konten %}
+
+{% block js %}
+<!-- Summernote -->
+<script src="{% static 'plugins/summernote/summernote-bs4.min.js' %}"></script>
+<script>
+    $(function () {
+      // Summernote
+      $('#summernote').summernote()
+  
+      // CodeMirror
+      CodeMirror.fromTextArea(document.getElementById("codeMirrorDemo"), {
+        mode: "htmlmixed",
+        theme: "monokai"
+      });
+    })
+</script> 
+{% endblock js %}
