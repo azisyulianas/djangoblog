@@ -70,6 +70,7 @@ class CreateViews(generic.View):
     def post(self, request, *args, **kwargs):
         category = self.modelCategory.objects.get(slug=request.POST.get('category'))
         print(kwargs)
+        
         # Update Post
         if 'slug' in kwargs:
             update = self.modelBlog.objects.get(slug=kwargs['slug'])

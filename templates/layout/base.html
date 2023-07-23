@@ -34,32 +34,62 @@
                 <li>
                     <a class="nav-link" aria-current="page" href="{% url 'blog:indexcategory' %}">List Category</a>
                 </li>
-                <li>
-                    <a class="nav-link" href="#">List User</a>
-                </li>
-                <li>
-                    <a class="nav-link" href="#">About Web</a>
-                </li>
                 {% if user.is_authenticated %}
                 <li>
                     <a class="nav-link" href="{% url 'blog:create' %}">Create Post</a>
                 </li>
                 {% endif %}
+                <li>
+                    <a class="nav-link" href="{% url 'users:list' %}">List User</a>
+                </li>
+                <li>
+                    <a class="nav-link" href="#">About Web</a>
+                </li>
                 
                 
 
             </ul>
             <div class="col-md-3 text-end">
                 {% if user.is_authenticated %}
-                    <button type="button" class="btn btn-danger">Log Out</button>
+                    <a href="{% url 'users:index' user %}" class="btn btn-primary me-2">{{ user }}</a>
+                    <a href="#" class="btn btn-danger">Log Out</a>
                 {% else %}
-                    <button type="button" class="btn btn-outline-primary me-2">Login</button>
-                    <button type="button" class="btn btn-primary">Sign-up</button>
+                    <a href="#" class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#modalForms">Login</a>
                 {% endif %}
             </div>
         </nav>
     </header>
     <!-- End Header -->
+    {% if not user.is_authenticated %}
+    <!-- Modal Form -->
+    <div class="modal fade" id="modalForms" tabindex="-1" aria-labelledby="modalFormsLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modalFormsLabel">Login</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="post">
+                        <div class="mb-3">
+                            <label for="username" class="col-form-label">Username</label>
+                            <input type="text" class="form-control" id="username" placeholder="Username" name="username">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="col-form-label">Password</label>
+                            <input type="password" class="form-control" id="password" placeholder="Password" name="password">
+                        </div>
+                        {% csrf_token %}
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <input type="submit" value="Login" class="btn btn-primary">
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 
     <!-- Main -->
     <main class="container">

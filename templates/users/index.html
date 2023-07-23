@@ -1,0 +1,68 @@
+{% extends 'layout/base.html' %}
+
+
+{% block judul %}
+User | {{ users.username }}
+{% endblock judul %}
+
+{% block konten %}
+
+<div class="card mb-2">
+    <div class="card-header">
+        Keterangan User {{ users.username }}
+    </div>
+    <div class="card-body">
+        <table>
+            <tr>
+                <th>username</th>
+                <td>: {{ users.username }}</td>
+            </tr>
+            <tr>
+                <th>Nama</th>
+                <td>:{% if users.full_name %} {{ users.full_name }} {% else %} {% endif %}</td>
+            </tr>
+            <tr>
+                <th>Alamat</th>
+                <td>: {% if users.alamat %} {{ users.alamat }} {% else %} {% endif %}</td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-footer">
+        <a href="#" class="btn btn-primary">Edit</a>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">
+        Postingan User {{ user.username }}
+    </div>
+    <div class="card-body">
+        {% if posts %}
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Judul</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for post in posts %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ post.title }}</td>
+                    <td>
+                        <a href="{% url 'blog:detail' post.slug %}"><i class="fa-solid fa-eye"></i></a>
+                        <a href="{% url 'blog:edit' post.slug %}"><i class="fa-solid fa-pen-to-square"></i></i></a>
+                        <a href="{% url 'blog:delete' post.slug %}" onclick="confirm('Delete Post {{ post.title }}?.')"><i class="fa-solid fa-trash"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <h1 class="card-text"> Tidak ada Data</h1>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock konten %}
