@@ -28,12 +28,12 @@ User | {{ users.username }}
         </table>
     </div>
     <div class="card-footer">
-        <a href="#" class="btn btn-primary">Edit</a>
+        <a href="{% url 'users:edit' users.username %}" class="btn btn-primary">Edit</a>
     </div>
 </div>
 <div class="card">
     <div class="card-header">
-        Postingan User {{ user.username }}
+        Postingan User {{ users.username }}
     </div>
     <div class="card-body">
         {% if posts %}

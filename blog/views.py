@@ -118,12 +118,20 @@ class CategoryIndex(generic.View):
         is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
         if is_ajax:
             name = request.POST.get('name')
-            category = self.modelCategory(name=name)
-            category.save()
-        return JsonResponse({
-            'message':'Data Berhasil Ditambahkan'
-        })
+
+            # Cek if have
+            if not self.modelCategory.objects.filter(name=name).exists():
+                category = self.modelCategory(name=name)
+                category.save()
     
+                return JsonResponse({
+                    'message':'Data Berhasil Ditambahkan'
+                })
+
+            return JsonResponse({
+                    'message':'Data Sudah Ada'
+                })
+        
 class CategoryEdit(generic.View):
     modelCategory = CategoryModel
     template_name = "blogs/editcategory.html"

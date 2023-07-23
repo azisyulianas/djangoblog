@@ -52,7 +52,24 @@ class RegisterViews(generic.View):
             user.groups.add(group)
             user_detailed = self.modelUser(username=user)
             user_detailed.save()
-            return redirect('user:list')
+            return redirect('users:list')
         else:
             return render(request, self.template_name, self.konten)
     
+class UserEditViews(generic.View):
+    template_name = "users/edit.html"
+    modelUser = UserPost
+    konten = {}
+
+    def get(self, request, *args, **kwargs):
+        self.konten['user']=self.modelUser.objects.get(username__username=kwargs['user'])
+        return render(request, self.template_name, self.konten)
+    
+    def post(self, request, *args, **kwargs):
+        user = self.modelUser.objects.get(username__username=kwargs['user'])
+        name = request.POST.get('name')
+        alamat = request.POST.get('alamat')
+        user.full_name = name
+        user.alamat = alamat
+        user.save()
+        return redirect('users:index', user=kwargs['user'])
