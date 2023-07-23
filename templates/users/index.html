@@ -28,7 +28,9 @@ User | {{ users.username }}
         </table>
     </div>
     <div class="card-footer">
+        {% if 'admin' in user.groups.all.0.name or user.is_superuser or users.username == user %}
         <a href="{% url 'users:edit' users.username %}" class="btn btn-primary">Edit</a>
+        {% endif %}
     </div>
 </div>
 <div class="card">
@@ -52,8 +54,10 @@ User | {{ users.username }}
                     <td>{{ post.title }}</td>
                     <td>
                         <a href="{% url 'blog:detail' post.slug %}"><i class="fa-solid fa-eye"></i></a>
+                        {% if 'admin' in user.groups.all.0.name or user.is_superuser or users.username == user %}
                         <a href="{% url 'blog:edit' post.slug %}"><i class="fa-solid fa-pen-to-square"></i></i></a>
                         <a href="{% url 'blog:delete' post.slug %}" onclick="confirm('Delete Post {{ post.title }}?.')"><i class="fa-solid fa-trash"></i></a>
+                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}

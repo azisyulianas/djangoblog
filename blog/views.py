@@ -4,6 +4,8 @@ from django.views import generic
 from .models import BlogPostModel, CategoryModel
 from django.utils.text import slugify
 from django.db.models import Count
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 
 # Create your views here.
 
@@ -43,7 +45,8 @@ class SingelPostViews(generic.View):
 
         return render(request, self.template_name, context=self.konten)
     
-class CreateViews(generic.View):
+class CreateViews(LoginRequiredMixin, generic.View):
+    login_url = "/"
     modelBlog = BlogPostModel
     modelCategory = CategoryModel
     template_name = "blogs/create.html"
@@ -56,16 +59,19 @@ class CreateViews(generic.View):
     def get(self, request, **kwargs):
         if 'slug' in kwargs:
             post = self.modelBlog.objects.get(slug=kwargs['slug'])
-            self.konten['post']= post
-            self.konten['judul']= f"Edit {post.title}"
+            if post.author == request.user or request.user.is_superuser or request.user.groups.filter(name='admin').exists():
+                self.konten['post']= post
+                self.konten['judul']= f"Edit {post.title}"
+                return render(request, self.template_name, context=self.konten)
+            else:
+                raise PermissionDenied()
         else:
             self.konten = {
                 'judul':'Create Post',
                 'categories':self.modelCategory.objects.order_by('name').all()
             }
-
-
-        return render(request, self.template_name, context=self.konten)
+            return render(request, self.template_name, context=self.konten)
+        
     
     def post(self, request, *args, **kwargs):
         category = self.modelCategory.objects.get(slug=request.POST.get('category'))
@@ -73,13 +79,15 @@ class CreateViews(generic.View):
         
         # Update Post
         if 'slug' in kwargs:
-            update = self.modelBlog.objects.get(slug=kwargs['slug'])
-            update.title = request.POST.get('title')
-            update.category = category
-            update.text = request.POST.get('text')
-            update.save()
+            post = self.modelBlog.objects.get(slug=kwargs['slug'])
+            if post.author == request.user or request.user.is_superuser or request.user.groups.filter(name='admin').exists():
+                post.title = request.POST.get('title')
+                post.category = category
+                post.text = request.POST.get('text')
+                post.save()
 
-            return redirect("blog:detail", slug=slugify(request.POST.get('title')))
+                return redirect("blog:detail", slug=slugify(request.POST.get('title')))
+            
         
         # Create Post
         created = self.modelBlog(
@@ -94,8 +102,11 @@ class CreateViews(generic.View):
 
 def delete(request, slug):
     post = BlogPostModel.objects.get(slug=slug)
-    post.delete()
-    return redirect("blog:index")
+    if post.author == request.user or request.user.is_superuser or request.user.groups.filter(name='admin').exists():
+        post.delete()
+        return redirect("blog:index")
+    else:
+        raise PermissionDenied()
 
 # Blog Views for Category
 class CategoryIndex(generic.View):
