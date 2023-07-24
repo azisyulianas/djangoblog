@@ -33,10 +33,9 @@ Edit {{ post.title }}
             </div>
             <div class="mb-3">
                 <label for="category" class="form-label">Category</label>
-                <select name="category" id="category" class="form-select" required>
-                    <option value="None">Pilih Category</option>
+                <select class="js-states form-control" required data-placeholder="Select a Category" name="category" id="category">
                     {% for category in categories %}
-                    <option value="{{ category.slug }}" {% if post %} {% if category.slug == post.category.slug %} selected {% endif %} {% endif %}>{{ category.name }}</option>
+                    <option value="{{ category.slug }}" {% if post and category.slug == post.category.slug %}  selected {% endif %}>{{ category.name }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -56,15 +55,20 @@ Edit {{ post.title }}
 <!-- Summernote -->
 <script src="{% static 'plugins/summernote/summernote-bs4.min.js' %}"></script>
 <script>
-    $(function () {
-      // Summernote
-      $('#summernote').summernote()
-  
-      // CodeMirror
-      CodeMirror.fromTextArea(document.getElementById("codeMirrorDemo"), {
-        mode: "htmlmixed",
-        theme: "monokai"
-      });
-    })
-</script> 
+    $(document).ready(function () {
+
+        $(function () {
+        // Summernote
+        $('#summernote').summernote()
+    
+        });
+
+        //Initialize Select2 Elements
+        $('#category').select2({
+            placeholder: 'Select an Category',
+            allowClear: true
+        })
+
+    });
+</script>
 {% endblock js %}

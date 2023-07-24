@@ -11,7 +11,7 @@ Users
         List Users
     </div>
     <div class="card-body">
-        {% if 'admin' in user.groups.all.0.name or user.is_superuser %}
+        {% if request.user.groups.filter.name.admin.exists or user.is_superuser %}
         <a href="{% url 'users:create' %}" class="btn btn-primary">Tambah User</a>
         {% endif %}
         <table class="table table-hover">
@@ -33,12 +33,10 @@ Users
                     <td>{{ usere.alamat }}</td>
                     <td>
                         <a href="{% url 'users:index' usere.username %}"><i class="fa-solid fa-eye"></i></a>
-                        {% if 'admin' in user.groups.all.0.name or user.is_superuser %}
+                        {% if usere.username == user%}
                         <a href="{% url 'users:edit' usere.username %}"><i class="fa-solid fa-pen-to-square"></i></i></a>
-                        <a href="#" onclick="confirm('Delete Post {{ usere.username }}?.')"><i class="fa-solid fa-trash"></i></a>
-                        {% elif usere.username == user %}
-                        <a href="{% url 'users:edit' usere.username %}"><i class="fa-solid fa-pen-to-square"></i></i></a>
-                        <a href="#" onclick="confirm('Delete Post {{ usere.username }}?.')"><i class="fa-solid fa-trash"></i></a>
+                        {% elif request.user.groups.filter.name.admin.exists or user.is_superuser %}
+                        <a href="#" onclick="return confirm('Delete Post {{ usere.username }}?.')"><i class="fa-solid fa-trash"></i></a>
                         {% endif %}
                     </td>
                 </tr>

@@ -12,8 +12,22 @@
     </div>
 </div>
 <div class="card mb-3">
-    <div class="card-header">
-        <h5 class="text-center">Category</h5>
+    <div class="card-header d-flex justify-content-between">
+        <div>
+            <h5 class="text-center">Category</h5>
+        </div>
+        <div>
+            <div class="dropdown-center">
+                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Page {{ posts.number }} of {{ posts.paginator.num_pages }}.
+                </button>
+                <ul class="dropdown-menu">
+                    {% for page in posts.paginator.page_range %}
+                    <li><a class="dropdown-item" href="?page={{ page }}">{{ page }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
     </div>
     <div class="card-header navbar navbar-expand-lg justify-content-center">
         <button class="navbar-toggler mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCategoryContent" aria-controls="navbarCategoryContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,7 +51,6 @@
         {{ judul }}
     </div>
     <div class="card-body">
-        {% if posts %}
         {% for post in posts %}
         <div class="card mb-2">
             <div class="card-header">
@@ -47,16 +60,25 @@
                 </blockquote>
             </div>
             <div class="card-body">
-                {{ post.text|slice:':300'| safe }}...
+                {{ post.text|slice:':3000'| safe }}...
             </div>
             <div class="card-footer">
                 <a href="{% url 'blog:detail' post.slug %}" class="btn btn-primary">Read More</a>
             </div>
         </div>
-        {% endfor %}
-        {% else %}
+        {% empty %}
         <h1 class="card-text"> Tidak ada Data</h1>
-        {% endif %}
+        {% endfor %}
     </div>     
 </div>
 {% endblock konten %}
+{% block js %}
+<script>
+    $(document).ready(function () {
+        $('#page').select2({
+            placeholder: 'Select an Page',
+            allowClear: true
+        })
+    });
+</script>    
+{% endblock js %}

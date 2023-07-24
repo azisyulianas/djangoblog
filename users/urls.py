@@ -1,11 +1,14 @@
 from django.urls import path
-from . import views
+
+from . import viewsAuth, viewsUser
 
 urlpatterns = [
-    path(r'', views.ListUser.as_view(), name='list'),
-    path(r'login', views.LoginViews.as_view(), name='login'),
-    path(r'logout', views.Logout, name='logout'),
-    path(r'create', views.RegisterViews.as_view(), name='create'),
-    path(r'user/<str:user>', views.IndexUsers.as_view(), name='index'),
-    path(r'user/<str:user>/edit', views.UserEditViews.as_view(), name='edit'),
+    # UserModel
+    path(r'', viewsAuth.ListUser.as_view(), name='list'),
+    path(r'user/<str:user>', viewsAuth.IndexUsers.as_view(), name='index'),
+    path(r'user/<str:user>/edit', viewsAuth.UserEditViews.as_view(), name='edit'),
+    # AuthModel
+    path(r'login', viewsUser.LoginViews.as_view(), name='login'),
+    path(r'logout', viewsUser.Logout, name='logout'),
+    path(r'create', viewsUser.RegisterViews.as_view(), name='create'),
 ]

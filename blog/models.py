@@ -16,8 +16,8 @@ class CategoryModel(models.Model):
 
 class BlogPostModel(models.Model):
     title = models.CharField(max_length=255)
-    author = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name='author_article_set')
-    category = models.ForeignKey(CategoryModel, null=True, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='author_article_set')
+    category = models.ForeignKey(CategoryModel, on_delete=models.CASCADE)
     text = models.TextField()
     slug = models.SlugField(unique=True)
     createAt    = models.DateTimeField(auto_now_add = True)

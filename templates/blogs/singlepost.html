@@ -16,10 +16,10 @@
     <div class="card-body">
         {{ post.text | safe }}
     </div>
-    {% if 'admin' in user.groups.all.0.name or user.is_superuser or post.author == user %}
+    {% if user.groups.filter.name.admin.exists or user.is_superuser or post.author == user %}
     <div class="card-footer">
         <a href="{% url 'blog:edit' post.slug %}" class="btn btn-primary">Edit</a>
-        <a href="{% url 'blog:delete' post.slug %}" class="btn btn-danger" onclick="confirm('Delete Post With Title {{ post.title }}')">Delete</a> 
+        <a href="{% url 'blog:delete' post.slug %}" class="btn btn-danger" onclick="return confirm('Delete Post With Title {{ post.title }}')">Delete</a> 
     </div>
     {% endif %}
 </div>
