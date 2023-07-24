@@ -17,7 +17,7 @@ class HomeViews(generic.View):
     konten = {
         'judul':f'Posts All',
         'posts':modelBlog.objects.order_by('createAt'),
-        'categories':modelCategory.objects.order_by('name').all()
+        'categories':modelCategory.objects.order_by('name')
     }
     
     def get(self, request, **kwargs):
@@ -27,14 +27,13 @@ class HomeViews(generic.View):
         if request.GET.get('page') != None:
             page = request.GET.get('page')
 
-        posts = self.modelBlog.objects.all().order_by('-createAt').values()
+        posts = self.modelBlog.objects.all().order_by('-createAt')
 
         if 'category' in kwargs:
             posts = self.modelBlog\
                     .objects\
                     .filter(category__slug=kwargs['category'])\
-                    .order_by('-createAt')\
-                    .values()
+                    .order_by('-createAt')
             posts_pagi = Paginator(posts, paginator)
 
             if posts_pagi.num_pages >= int(page) and int(page)>0:
@@ -46,7 +45,7 @@ class HomeViews(generic.View):
                 return HttpResponse(f'Total Page Count Is Less Than Page or Less Than Zero')
 
         posts_pagi = Paginator(posts, paginator)
-        
+
         if posts_pagi.num_pages >= int(page) and int(page)>0:
             self.konten['posts']= posts_pagi.page(page)
             self.konten['judul']='Posts All'

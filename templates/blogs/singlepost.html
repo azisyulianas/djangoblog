@@ -10,17 +10,32 @@
     <div class="card-header">
         <p class="fs-4 fw-bold mb-3">{{ post.title }}</p>
         <blockquote class="blockquote fs-6">
-            <footer class="blockquote-footer"><cite title="Source Title">{{ post.createAt }}</cite> by <cite title="Source Title">{{ post.author }}</cite> in <cite title="Source Title">{{ post.category.name }}</cite></footer>
+            <footer class="blockquote-footer">
+                <cite title="Source Title">
+                    {{ post.createAt|date:"SHORT_DATE_FORMAT" }}
+                </cite> by 
+                <cite title="Source Title">
+                    <a href="{% url 'users:index' post.author %}" class="link-underline link-underline-opacity-0 link-secondary">
+                        {{ post.author}}
+                    </a>   
+                </cite> in 
+                <cite title="Source Title">
+                    <a href="{% url 'blog:category' post.category.name %}" class="link-underline link-underline-opacity-0 link-secondary">
+                        {{ post.category.name }}
+                    </a>
+                </cite>
+            </footer>
         </blockquote>
     </div>
     <div class="card-body">
         {{ post.text | safe }}
     </div>
-    {% if user.groups.filter.name.admin.exists or user.is_superuser or post.author == user %}
     <div class="card-footer">
+        <button class="btn btn-info" onclick="history.back()"> Back </button>
+    {% if user.groups.filter.name.admin.exists or user.is_superuser or post.author == user %}
         <a href="{% url 'blog:edit' post.slug %}" class="btn btn-primary">Edit</a>
         <a href="{% url 'blog:delete' post.slug %}" class="btn btn-danger" onclick="return confirm('Delete Post With Title {{ post.title }}')">Delete</a> 
-    </div>
     {% endif %}
+    </div>
 </div>
 {% endblock konten %}

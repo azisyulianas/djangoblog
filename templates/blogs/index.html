@@ -5,6 +5,16 @@
 {{ judul }}
 {% endblock judul %}
 
+{% block css %}
+<style>
+    .scrollable-menu {
+        height: auto;
+        max-height: 200px;
+        overflow-x: hidden;
+    }
+</style>  
+{% endblock css %}
+
 {% block konten %}
 <div class="card mb-3">
     <div class="card-header">
@@ -16,18 +26,20 @@
         <div>
             <h5 class="text-center">Category</h5>
         </div>
+        {% if posts.paginator.num_pages > 1 %}
         <div>
             <div class="dropdown-center">
                 <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Page {{ posts.number }} of {{ posts.paginator.num_pages }}.
                 </button>
-                <ul class="dropdown-menu">
+                <ul class="dropdown-menu scrollable-menu" role="menu">
                     {% for page in posts.paginator.page_range %}
                     <li><a class="dropdown-item" href="?page={{ page }}">{{ page }}</a></li>
                     {% endfor %}
                 </ul>
             </div>
         </div>
+        {% endif %}
     </div>
     <div class="card-header navbar navbar-expand-lg justify-content-center">
         <button class="navbar-toggler mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCategoryContent" aria-controls="navbarCategoryContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,24 +63,26 @@
         {{ judul }}
     </div>
     <div class="card-body">
-        {% for post in posts %}
-        <div class="card mb-2">
-            <div class="card-header">
-                <p class="fs-4 fw-bold mb-3">{{ post.title }}</p>
-                <blockquote class="blockquote fs-6">
-                    <footer class="blockquote-footer"><cite title="Source Title">{{ post.createAt }}</cite> by <cite title="Source Title">{{ post.author}}</cite> in <cite title="Source Title">{{ post.category.name }}</cite></footer>
-                </blockquote>
-            </div>
-            <div class="card-body">
-                {{ post.text|slice:':3000'| safe }}...
-            </div>
-            <div class="card-footer">
-                <a href="{% url 'blog:detail' post.slug %}" class="btn btn-primary">Read More</a>
-            </div>
-        </div>
+        <div class="list-group">
+        {% for post in posts.paginator.object_list %}
+            <li class="list-group-item list-group-item-action mb-3 shadow">
+                <div class="d-flex w-100 justify-content-between">
+                    <a href="{% url 'blog:detail' post.slug %}" class="link-underline link-underline-opacity-0 link-body-emphasis">{{ post.title }}</a>
+                </div>
+                <small class="mb-1 text-secondary fst-italic">
+                    create at {{ post.createAt|date:"SHORT_DATE_FORMAT" }} 
+                    by <a href="{% url 'users:index' post.author %}" class="link-underline link-underline-opacity-0 link-secondary">
+                        {{ post.author}}
+                    </a> 
+                    in <a href="{% url 'blog:category' post.category.name %}" class="link-underline link-underline-opacity-0 link-secondary">
+                        {{ post.category.name }}
+                    </a>
+                </small>
+            </li>
         {% empty %}
         <h1 class="card-text"> Tidak ada Data</h1>
         {% endfor %}
+        </div>      
     </div>     
 </div>
 {% endblock konten %}
