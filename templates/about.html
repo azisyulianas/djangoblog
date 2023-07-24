@@ -1,0 +1,80 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% block judul %}
+About
+{% endblock judul %}
+
+{% block konten %}
+<div class="card mb-3">
+    <div class="row g-0">
+        <div class="col-md-4">
+            <img src="{% static 'img/azis.jpg' %}" class="img-fluid rounded-start" alt="Azis Yulianas" height="600pt">
+        </div>
+        <div class="col-md-8">
+            <div class="card-header">
+                <h5 class="card-title">About Me</h5>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Azis Yulianas</h5>
+                <p class="card-text">
+                    Hello my name is Azis Yulianas. You can call me Ali or Azis. i'm fresh graduates from UIN Malang at Mathematic department. I'm have some experience in web developer. i can join the fullstack team or backend team. I'm have some skill in fullstack using frameworks on two programing language. First is Python I'm using django like this website is build base Django framework. The Second is PHP i using Laravel Framework, using laravel i build some independent projects like web for requitment and truck dealer. I'm powerfull thanks for any advice or other about this project. You can reach this project in this <a href="https://github.com/azisyulianas/djangoblog">Link</a> i will happy when someone give me some advice or many many advice.
+                </p>
+            </div>
+            <div class="card-footer">
+                <p class="card-text">
+                    Interested? you can reach me at..
+                </p>
+                <div class="g-2">
+                    <a href="https://www.linkedin.com/in/azis-yulianas-9a4a8a125/" class="btn btn-outline-secondary"><i class="fa-brands fa-linkedin"></i></a>
+                    <a href="https://web.facebook.com/azis.yulianas/" class="btn btn-outline-secondary"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="https://github.com/azisyulianas" class="btn btn-outline-secondary"><i class="fa-brands fa-github"></i></a>
+                    <a href="https://www.instagram.com/azis.yulianas/" class="btn btn-outline-secondary"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="mailto:azis3111@gmail.com" class="btn btn-outline-secondary"><i class="fa-solid fa-envelope"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card mb-3">
+    <div class="card-header">
+        <h5 class="card-title">About The Project</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">Spesifikasi</div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush list-gourp-numbered">
+                            <li class="list-group-item list-group-item-action">Python 3.8.10</li>
+                            <li class="list-group-item list-group-item-action">Django</li>
+                            <li class="list-group-item list-group-item-action">SQLite</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">Instalation</div>
+                    <div class="card-body">
+                        <code>
+                            ```bash <br>
+                            git clone https://github.com/azisyulianas/djangoblog.git <br>
+                            py -m venv venv <br>
+                            \venv\Scripts\activate <br>
+                            py install -r requirements.txt <br>
+                            py manage.py makemigrations <br>
+                            py manage.py migrate <br>
+                            py manage.py createsuperuser <br>
+                            py manage.py runserver <br>
+                            ```
+                        </code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock konten %}
