@@ -25,7 +25,7 @@ Edit {{ post.title }}
         {% endif %}
     </div>
     <div class="card-body">
-        <form action="{% if post %} {% url 'blog:edit' post.slug %} {% else %} {% url 'blog:create' %} {% endif %}" method="post">
+        <form action="" method="post">
             {% csrf_token %}
             <div class="mb-3">
                 <label for="title" class="form-label">Judul Post</label>
