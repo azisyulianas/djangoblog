@@ -1,7 +1,7 @@
 # BLOG URLS
 from django.urls import path
 
-from blog import viewsCategory, viewsBlog
+from blog.views import viewsCategory, viewsBlog
 
 urlpatterns = [
     # Blog Urls

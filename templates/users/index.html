@@ -1,5 +1,5 @@
 {% extends 'layout/base.html' %}
-
+{% load custom_tags %}
 
 {% block judul %}
 User | {{ users.username }}
@@ -54,7 +54,7 @@ User | {{ users.username }}
                     <td>{{ post.title }}</td>
                     <td>
                         <a href="{% url 'blog:detail' post.slug %}"><i class="fa-solid fa-eye"></i></a>
-                        {% if request.user.groups.filter.name.admin.exists or user.is_superuser or users.username == user %}
+                        {% if request.user|has_group:"admin" or user.is_superuser or users.username == user %}
                         <a href="{% url 'blog:edit' post.slug %}"><i class="fa-solid fa-pen-to-square"></i></i></a>
                         <a href="{% url 'blog:delete' post.slug %}" onclick="return confirm('Delete Post {{ post.title }}?.')"><i class="fa-solid fa-trash"></i></a>
                         {% endif %}

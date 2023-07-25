@@ -6,7 +6,7 @@ from django.shortcuts import redirect, render
 from django.utils.text import slugify
 from django.views import generic
 
-from .models import BlogPostModel, CategoryModel
+from blog.models import BlogPostModel, CategoryModel
 
 
 # Blog Views for Blogs

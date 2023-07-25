@@ -4,7 +4,7 @@ from django.views import generic
 
 from blog.models import BlogPostModel
 
-from .models import UserPost
+from users.models import UserPost
 
 
 # UserModel
