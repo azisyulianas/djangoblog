@@ -74,7 +74,7 @@
                     by <a href="{% url 'users:index' post.author %}" class="link-underline link-underline-opacity-0 link-secondary">
                         {{ post.author}}
                     </a> 
-                    in <a href="{% url 'blog:category' post.category.name %}" class="link-underline link-underline-opacity-0 link-secondary">
+                    in <a href="{% url 'blog:category' post.category.slug %}" class="link-underline link-underline-opacity-0 link-secondary">
                         {{ post.category.name }}
                     </a>
                 </small>
