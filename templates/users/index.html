@@ -34,8 +34,26 @@ User | {{ users.username }}
     </div>
 </div>
 <div class="card">
-    <div class="card-header">
-        Postingan User {{ users.username }}
+    <div class="card-header d-flex justify-content-between">
+        <div>
+            Postingan User {{ users.username }}
+        </div>
+        <div>
+            {% if posts.paginator.num_pages > 1 %}
+                <div>
+                    <div class="dropdown-center">
+                        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Page {{ posts.number }} of {{ posts.paginator.num_pages }}.
+                        </button>
+                        <ul class="dropdown-menu scrollable-menu" role="menu">
+                            {% for page in posts.paginator.page_range %}
+                            <li><a class="dropdown-item" href="?page={{ page }}">{{ page }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
     </div>
     <div class="card-body">
         {% if posts %}
