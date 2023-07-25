@@ -51,7 +51,14 @@ User | {{ users.username }}
                 {% for post in posts %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
-                    <td>{{ post.title }}</td>
+                    <td>
+                        {{ post.title }}
+                        {% if not post.is_publish %}
+                        <span  data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Not Publised">
+                            <i class="fa-solid fa-triangle-exclamation" style="color: #ff0000;"></i>
+                        </span>
+                        {% endif %}
+                    </td>
                     <td>
                         <a href="{% url 'blog:detail' post.slug %}"><i class="fa-solid fa-eye"></i></a>
                         {% if request.user|has_group:"admin" or user.is_superuser or users.username == user %}
@@ -70,3 +77,10 @@ User | {{ users.username }}
 </div>
 
 {% endblock konten %}
+{% block js %}
+<script>
+    const tooltip = new bootstrap.Tooltip('span', {
+        boundary: document.body // or document.querySelector('#boundary')
+    })
+</script>
+{% endblock js %}

@@ -1,6 +1,7 @@
 {% extends 'layout/base.html' %}
 
 {% load static %}
+{% load custom_tags %}
 
 {% block judul %}
 {% if post %}
@@ -27,17 +28,40 @@ Edit {{ post.title }}
     <div class="card-body">
         <form action="" method="post">
             {% csrf_token %}
-            <div class="mb-3">
-                <label for="title" class="form-label">Judul Post</label>
-                <input type="text" class="form-control" id="title" name="title" placeholder="Saya Suka Dia" value="{% if post %} {{ post.title }} {% endif %}" required>
+            <div class="row">
+                <div class="col">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Judul Post</label>
+                        <input type="text" class="form-control" id="title" name="title" placeholder="Saya Suka Dia" value="{% if post %} {{ post.title }} {% endif %}" required>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Category</label>
+                        <select class="js-states form-control" required data-placeholder="Select a Category" name="category" id="category">
+                            {% for category in categories %}
+                            <option value="{{ category.slug }}" {% if post and category.slug == post.category.slug %}  selected {% endif %}>{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
             </div>
-            <div class="mb-3">
-                <label for="category" class="form-label">Category</label>
-                <select class="js-states form-control" required data-placeholder="Select a Category" name="category" id="category">
-                    {% for category in categories %}
-                    <option value="{{ category.slug }}" {% if post and category.slug == post.category.slug %}  selected {% endif %}>{{ category.name }}</option>
-                    {% endfor %}
-                </select>
+            
+            <div class="row mb-3">
+                <div class="col">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="True" id="publish"
+                        {% if request.user|has_group:'author' %}
+                            disabled 
+                        {% endif %} name="publish"
+                        {% if post.is_publish %}
+                            checked
+                        {% endif %}>
+                        <label class="form-check-label" for="publish">
+                            Publised
+                        </label>
+                    </div>
+                </div>
             </div>
             <div class="mb-3">
                 <textarea id="summernote" name="text" required>
@@ -45,7 +69,6 @@ Edit {{ post.title }}
                 </textarea>
             </div>
             <input type="submit" value="Save" class="btn btn-primary">
-
         </form>
     </div>
 </div>

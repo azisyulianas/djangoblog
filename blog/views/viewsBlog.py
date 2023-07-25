@@ -16,7 +16,7 @@ class HomeViews(generic.View):
     template_name = "blogs/index.html"
     konten = {
         'judul':f'Posts All',
-        'posts':modelBlog.objects.order_by('createAt'),
+        'posts':modelBlog.objects.filter(is_publish=True).order_by('-createAt'),
         'categories':modelCategory.objects.order_by('name')
     }
     
@@ -27,12 +27,12 @@ class HomeViews(generic.View):
         if request.GET.get('page') != None:
             page = request.GET.get('page')
 
-        posts = self.modelBlog.objects.all().order_by('-createAt')
+        posts = self.modelBlog.objects.filter(is_publish=True).order_by('-createAt')
 
         if 'category' in kwargs:
             posts = self.modelBlog\
                     .objects\
-                    .filter(category__slug=kwargs['category'])\
+                    .filter(category__slug=kwargs['category'], is_publish=True)\
                     .order_by('-createAt')
             posts_pagi = Paginator(posts, paginator)
 
@@ -96,6 +96,12 @@ class CreateViews(LoginRequiredMixin, generic.View):
         
     
     def post(self, request, *args, **kwargs):
+        print(request.POST)
+        checked = False
+        if 'publish' in request.POST:
+            checked = True
+            publisher = request.user
+        
         if self.modelCategory.objects.filter(slug=request.POST.get('category')).exists():
 
             category = self.modelCategory.objects.get(slug=request.POST.get('category'))
@@ -108,18 +114,26 @@ class CreateViews(LoginRequiredMixin, generic.View):
                     post.title = request.POST.get('title')
                     post.category = category
                     post.text = request.POST.get('text')
+                    if request.user.groups.filter(name='admin').exists():
+                        post.is_publish = checked
+                        post.publisher = publisher # type: ignore
+
                     post.save()
                     return redirect("blog:detail", slug=slugify(request.POST.get('title')))
                 else:
                     raise PermissionDenied()
                 
-             # Create Post
+            # Create Post
             post = self.modelBlog(
                 title=request.POST.get('title'),
                 author=request.user,
                 category=category, # type: ignore
                 text=request.POST.get('text'),
             )
+            if checked:
+                post.publisher = publisher # type: ignore
+                post.is_publish = checked
+
             post.save()
             
             return redirect("blog:detail", slug=slugify(request.POST.get('title')))  
