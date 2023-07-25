@@ -33,7 +33,7 @@ Can't See Anymore!!
                     </a>   
                 </cite> in 
                 <cite title="Source Title">
-                    <a href="{% url 'blog:category' post.category.name %}" class="link-underline link-underline-opacity-0 link-secondary">
+                    <a href="{% url 'blog:category' post.category.slug %}" class="link-underline link-underline-opacity-0 link-secondary">
                         {{ post.category.name }}
                     </a>
                 </cite>
