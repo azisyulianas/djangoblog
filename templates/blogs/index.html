@@ -2,7 +2,7 @@
 
 
 {% block judul %}
-{{ judul }}
+{{ judul|title }}
 {% endblock judul %}
 
 {% block css %}
@@ -60,7 +60,7 @@
 
 <div class="card">
     <div class="card-header">
-        {{ judul }}
+        {{ judul|title }}
     </div>
     <div class="card-body">
         <div class="list-group">
