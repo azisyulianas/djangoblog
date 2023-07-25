@@ -1,4 +1,5 @@
 {% extends 'layout/base.html' %}
+{% load custom_tags %}
 
 
 {% block judul %}
@@ -32,7 +33,7 @@
     </div>
     <div class="card-footer">
         <button class="btn btn-info" onclick="history.back()"> Back </button>
-    {% if user.groups.filter.name.admin.exists or user.is_superuser or post.author == user %}
+    {% if request.user|has_group:"admin" or user.is_superuser or post.author == user %}
         <a href="{% url 'blog:edit' post.slug %}" class="btn btn-primary">Edit</a>
         <a href="{% url 'blog:delete' post.slug %}" class="btn btn-danger" onclick="return confirm('Delete Post With Title {{ post.title }}')">Delete</a> 
     {% endif %}
