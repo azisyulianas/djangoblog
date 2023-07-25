@@ -1,5 +1,5 @@
-from .forms import RegisterForms
-from .models import UserPost
+from users.forms import RegisterForms
+from users.models import UserPost
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout

@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.views import generic
 
-from .models import BlogPostModel, CategoryModel
+from blog.models import BlogPostModel, CategoryModel
 
 # Create your views here.
 

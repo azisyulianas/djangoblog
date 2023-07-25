@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import viewsAuth, viewsUser
+from .views import viewsAuth, viewsUser
 
 urlpatterns = [
     # UserModel
