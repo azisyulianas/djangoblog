@@ -15,14 +15,12 @@ class CategoryIndex(generic.View):
     template_name = "blogs/category.html"
     konten = {
         'judul':f'Summaries Category',
-        'summaries':modelBlog.objects.values('category__name','category__slug')\
-                .annotate(total=Count('id'))\
-                .order_by('-total').all(),
         'categories':modelCategory.objects.order_by('name').all()
     }
 
     def get(self, request, **kwargs):
         self.konten['categories']=self.modelCategory.objects.order_by('name').all()
+        self.konten['summaries']=BlogPostModel.objects.total()
         return render(request, self.template_name, context=self.konten)
     
     def post(self, request, *args, **kwargs):
@@ -36,11 +34,13 @@ class CategoryIndex(generic.View):
                 category.save()
     
                 return JsonResponse({
-                    'message':'Data Berhasil Ditambahkan'
+                    'message':'Data Berhasil Ditambahkan',
+                    'status':True
                 })
 
             return JsonResponse({
-                    'message':'Data Sudah Ada'
+                    'message':'Data Sudah Ada',
+                    'status':False
                 })
         
 class CategoryEdit(generic.View):

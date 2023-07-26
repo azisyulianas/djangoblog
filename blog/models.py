@@ -1,8 +1,23 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
+from django.db.models import Count
 
 # Create your models here.
+
+class BlogQuery(models.QuerySet):
+    def total(self):
+        return self.values('category__name','category__slug')\
+                .annotate(total=Count('id'))\
+                .order_by('-total')
+
+class BlogManager(models.Manager):
+    def query_set(self):
+        return BlogQuery(self.model, using=self._db)
+
+    def total(self,):
+        return self.query_set().total()
+
 class CategoryModel(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
@@ -24,6 +39,8 @@ class BlogPostModel(models.Model):
     is_publish = models.BooleanField(default=False, blank=True)
     createAt    = models.DateTimeField(auto_now_add = True)
     updateAt    = models.DateTimeField(auto_now = True)
+
+    objects=BlogManager()
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
