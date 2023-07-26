@@ -23,26 +23,28 @@ class HomeViews(generic.View):
     def get(self, request, **kwargs):
         page = 1
         paginator = 10
-
+        category=None
+        search=None
         if request.GET.get('page') != None:
             page = request.GET.get('page')
 
-        posts = self.modelBlog.objects.filter(is_publish=True).order_by('-createAt')
+        if request.GET.get('key') != None:
+            search = request.GET.get('key')  
+
+        posts = BlogPostModel.objects.cari(category=category, key=search)
 
         if 'category' in kwargs:
-            posts = self.modelBlog\
-                    .objects\
-                    .filter(category__slug=kwargs['category'], is_publish=True)\
-                    .order_by('-createAt')
+            category = kwargs["category"]
+            posts = BlogPostModel.objects.cari(category=category, key=search)
             posts_pagi = Paginator(posts, paginator)
 
             if posts_pagi.num_pages >= int(page) and int(page)>0:
-                self.konten['judul']=f'Posts by category {kwargs["category"]}'
+                self.konten['judul']=f'Posts by category {category}'
                 self.konten['posts']= posts_pagi.page(page)
 
                 return render(request, self.template_name, context=self.konten)
             else:
-                return HttpResponse(f'Total Page Count Is Less Than Page or Less Than Zero')
+                return HttpResponse(f'Total Page Count is Less Than Page or Page is Less Than Zero')
 
         posts_pagi = Paginator(posts, paginator)
 
@@ -52,7 +54,7 @@ class HomeViews(generic.View):
         
             return render(request, self.template_name, context=self.konten)
         else:
-            return HttpResponse(f'Total Page Count Is Less Than Page or Less Than Zero')
+            return HttpResponse(f'Total Page Count is Less Than Page or Page is Less Than Zero')
 
         
 

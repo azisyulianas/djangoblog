@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
 from django.db.models import Count
+from django.db.models import Q
 
 # Create your models here.
 
@@ -10,6 +11,32 @@ class BlogQuery(models.QuerySet):
         return self.values('category__name','category__slug')\
                 .annotate(total=Count('id'))\
                 .order_by('-total')
+    
+    def cari(self, category=None, key=None):
+        if key is None or key == "":
+            if category is None:
+                posts = self.filter(is_publish=True)\
+                    .order_by('-createAt')
+                return posts
+        
+            look = Q(is_publish=True) & Q(category__slug = category)
+            posts = self.filter(look)\
+                    .order_by('-createAt')
+            return posts
+        
+
+        search = Q(title__icontains=key) | Q(text__icontains=key)
+        if category is None:
+            posts = self.filter(is_publish=True)\
+                    .filter(search)\
+                    .order_by('-createAt')
+            return posts
+        
+        look = Q(is_publish=True) & Q(category__slug = category)
+        posts = self.filter(look)\
+                .filter(search)\
+                .order_by('-createAt')
+        return posts
 
 class BlogManager(models.Manager):
     def query_set(self):
@@ -17,6 +44,9 @@ class BlogManager(models.Manager):
 
     def total(self,):
         return self.query_set().total()
+    
+    def cari(self, category=None, key=None):
+        return self.query_set().cari(category=category, key=key)
 
 class CategoryModel(models.Model):
     name = models.CharField(max_length=255)

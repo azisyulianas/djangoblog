@@ -19,8 +19,14 @@ class CategoryIndex(generic.View):
     }
 
     def get(self, request, **kwargs):
+        query = BlogPostModel.objects.total()[:10]
         self.konten['categories']=self.modelCategory.objects.order_by('name').all()
-        self.konten['summaries']=BlogPostModel.objects.total()
+        self.konten['summaries']=query
+        total = [i['total'] for i in query]
+        label = [i['category__name'] for i in query]
+        self.konten['total']=total
+        self.konten['label']=label
+        # return dd(self.konten)
         return render(request, self.template_name, context=self.konten)
     
     def post(self, request, *args, **kwargs):

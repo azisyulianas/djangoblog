@@ -39,24 +39,9 @@
             <button class="btn btn-outline-secondary" type="button" id="save">Tambahkan</button>
         </div>
         {% endif %}
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Category</th>
-                    <th>Jumlah Post</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for summary in summaries %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td><a href="{% url 'blog:category' summary.category__slug %}" class="link-underline-light">{{ summary.category__name }}</a></td>
-                    <td>{{ summary.total }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="chart-container" style="position: relative; height:100vh; width:100%">
+            <canvas id="myChart"></canvas>
+        </div>
     </div>
 </div>
 {% if request.user|has_group:"admin" or user.is_superuser %}
@@ -113,6 +98,26 @@
                     location.reload();
                 }
             });
+        });
+        const ctx = document.getElementById('myChart');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ label|safe }},
+                datasets: [{
+                    label: '# 10 Kategori Dengan Post Terbanyak',
+                    data: {{ total|safe }},
+                    borderWidth: 1
+                }]
+            },
+            options: {
+            scales: {
+                y: {
+                beginAtZero: true
+                }
+            }
+            }
         });
     });
 </script>
