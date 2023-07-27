@@ -2,6 +2,7 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect, render
 from django.views import generic
 from django.core.paginator import Paginator
+import os
 
 from blog.models import BlogPostModel
 
@@ -46,7 +47,7 @@ class UserEditViews(generic.View):
     konten = {}
 
     def get(self, request, *args, **kwargs):
-        if kwargs['user'] == request.user or request.user.is_superuser or request.user.groups.filter(name='admin').exists():
+        if kwargs['user'] == request.user.username:
             self.konten['user']=self.modelUser.objects.get(username__username=kwargs['user'])
             return render(request, self.template_name, self.konten)
         else:
@@ -57,7 +58,17 @@ class UserEditViews(generic.View):
         user = self.modelUser.objects.get(username__username=kwargs['user'])
         name = request.POST.get('name')
         alamat = request.POST.get('alamat')
+        bio = request.POST.get('bio')
         user.full_name = name
         user.alamat = alamat
+        user.bio = bio
+
+        if 'image' in request.FILES:
+            image_path = user.image.path
+            if os.path.exists(image_path):
+                os.remove(image_path)
+            user.image = request.FILES.get('image')
+            
         user.save()
+
         return redirect('users:index', user=kwargs['user'])

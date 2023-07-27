@@ -11,7 +11,7 @@ Edit Akun {{ user.username }}
           Register
         </div>
         <div class="card-body">
-            <form action="" method="post">
+            <form action="" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="mb-3">
                     <label for="name" class="form-label">Nama Lengkap</label>
@@ -19,9 +19,15 @@ Edit Akun {{ user.username }}
                 </div>
                 <div class="mb-3">
                     <label for="alamat" class="form-label">Nama Lengkap</label>
-                    <textarea class="form-control" id="alamat" name="alamat">
-                        {{ user.alamat }}
-                    </textarea>
+                    <textarea class="form-control" id="alamat" name="alamat">{% if user.alamat %}{{ user.alamat }}{% endif %}</textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="bio" class="form-label">Bio</label>
+                    <textarea class="form-control" id="bio" name="bio">{% if user.bio %}{{ user.bio }}{% endif %}</textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="formFile" class="form-label">Chose Image</label>
+                    <input class="form-control" type="file" id="formFile" name="image">
                 </div>
                 <input type="submit" value="Change" class="btn btn-primary">
             </form>

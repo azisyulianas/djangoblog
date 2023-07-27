@@ -3,75 +3,165 @@
 
 
 {% block judul %}
-{% if post.is_publish or request.user|has_group:"admin" or user.is_superuser or post.author == user %}
-{{ post.title }}
-{% else %}
-Can't See Anymore!!
-{% endif %}
+    {% if post.is_publish or request.user|has_group:"admin" or user.is_superuser or post.author == user %}
+        {{ post.title }}
+    {% else %}
+        Can't See Anymore!!
+    {% endif %}
 {% endblock judul %}
 
+
 {% block konten %}
+
 {% if post.is_publish or request.user|has_group:"admin" or user.is_superuser or post.author == user %}
-<div class="card">
-    <div class="card-header">
-        <p class="fs-4 fw-bold mb-3">
-            {{ post.title }}
-            {% if not post.is_publish %}
-                <span  data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Not Publised">
-                    <i class="fa-solid fa-triangle-exclamation" style="color: #ff0000;"></i>
-                </span>
-            {% endif %}
-        </p>
-        <blockquote class="blockquote fs-6">
-            <footer class="blockquote-footer">
+    <div class="card mb-1">
+        <div class="card-header">
+            <p class="fs-4 fw-bold mb-3">
+                {{ post.title }}
+                {% if not post.is_publish %}
+                    <span  data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Not Publised">
+                        <i class="fa-solid fa-triangle-exclamation" style="color: #ff0000;"></i>
+                    </span>
+                {% endif %}
+            </p>
+            <blockquote class="blockquote fs-6">
+                <footer class="blockquote-footer">
+                    <cite title="Source Title">
+                        {{ post.createAt|date:"SHORT_DATE_FORMAT" }}
+                    </cite> by 
+                    <cite title="Source Title">
+                        <a href="{% url 'users:index' post.author %}" class="link-underline link-underline-opacity-0 link-secondary">
+                            {{ post.author}}
+                        </a>   
+                    </cite> in 
+                    <cite title="Source Title">
+                        <a href="{% url 'blog:category' post.category.slug %}" class="link-underline link-underline-opacity-0 link-secondary">
+                            {{ post.category.name }}
+                        </a>
+                    </cite>
+                </footer>
+            </blockquote>
+        </div>
+        <div class="card-body">
+            {{ post.text | safe }}
+        </div>
+        <div class="card-footer d-flex justify-content-between">
+            <div>
+                <button class="btn btn-info" onclick="history.back()"> Back </button>
+                {% if request.user|has_group:"admin" or user.is_superuser or post.author == user %}
+                    <a href="{% url 'blog:edit' post.slug %}" class="btn btn-primary">Edit</a>
+                    <a href="{% url 'blog:delete' post.slug %}" class="btn btn-danger" onclick="return confirm('Delete Post With Title {{ post.title }}')">Delete</a> 
+                {% endif %}
+            </div>
+            <div>
+                Editor
                 <cite title="Source Title">
-                    {{ post.createAt|date:"SHORT_DATE_FORMAT" }}
-                </cite> by 
-                <cite title="Source Title">
-                    <a href="{% url 'users:index' post.author %}" class="link-underline link-underline-opacity-0 link-secondary">
-                        {{ post.author}}
+                    <a href="{% url 'users:index' post.publisher %}" class="link-underline link-underline-opacity-0 link-secondary">
+                        {{ post.publisher}}
                     </a>   
-                </cite> in 
-                <cite title="Source Title">
-                    <a href="{% url 'blog:category' post.category.slug %}" class="link-underline link-underline-opacity-0 link-secondary">
-                        {{ post.category.name }}
-                    </a>
                 </cite>
-            </footer>
-        </blockquote>
-    </div>
-    <div class="card-body">
-        {{ post.text | safe }}
-    </div>
-    <div class="card-footer d-flex justify-content-between">
-        <div>
-            <button class="btn btn-info" onclick="history.back()"> Back </button>
-            {% if request.user|has_group:"admin" or user.is_superuser or post.author == user %}
-                <a href="{% url 'blog:edit' post.slug %}" class="btn btn-primary">Edit</a>
-                <a href="{% url 'blog:delete' post.slug %}" class="btn btn-danger" onclick="return confirm('Delete Post With Title {{ post.title }}')">Delete</a> 
-            {% endif %}
-        </div>
-        <div>
-            Editor
-            <cite title="Source Title">
-                <a href="{% url 'users:index' post.publisher %}" class="link-underline link-underline-opacity-0 link-secondary">
-                    {{ post.publisher}}
-                </a>   
-            </cite>
+            </div>
         </div>
     </div>
-</div>
+    <div class="card">
+        <div class="card-header">
+            Comentary
+        </div>
+        <div class="card-body">
+            <div class="list-group">
+                <li class="list-group-item list-group-item-action mb-3 shadow">
+                    {% if user.is_authenticated %}
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <div class="input-group mb-1">
+                            <img src="{{ userpost.image.url }}" class="rounded-start mb-1" alt="User 1" width="50pt" height="50pt">
+                            <textarea class="form-control" aria-label="With textarea" id="comment" name="comment"></textarea>
+                            <input type="submit" value="Submit" class="btn btn-primary btn-sm">
+                            <button class="btn btn-danger btn-sm" id="cancel">Cancel</button>
+                        </div>
+                    </form>
+                    {% else %}
+                    You Must Login To Add a Comentary
+                    {% endif %}
+                </li>
+                {% for comentary in comentaries %}
+                    <li class="list-group-item list-group-item-action mb-3 shadow">
+                        <!-- Isi Komentar -->
+                        <div class="d-flex w-100 justify-content-between">
+                            <div class="row">
+                                <div class="col-md-1">
+                                    <img src="{{ comentary.user.image.url }}" alt="{{ comentary.user.username }}" width="50pt" height="50pt">
+                                </div>
+                                <div class="col">
+                                    <p>{{ comentary.comment }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Action dan Keterangan Komentar -->
+                        <div class="d-flex justify-content-between">
+                            <small class="mb-1 text-secondary fst-italic">
+                                Create at {{ comentary.createAt }}
+                                by 
+                                <a href="{% url 'users:index' comentary.user %}" class="link-underline link-underline-opacity-0 link-secondary">
+                                    {{ comentary.user.username }}
+                                </a>
+                                {% if comentary.is_edited %}
+                                    <span class="badge text-bg-secondary">Edited</span>
+                                {% endif %}
+                            </small>
+                            {% if comentary.user.username == user %}
+                            <small>
+                                <a href="#comment" class="badge text-bg-primary link-underline link-underline-opacity-0 comment" data="{{ comentary.comment }}" id="{{ comentary.id }}">Edit</a>
+                                <a href="?delete={{ comentary.id }}" class="badge text-bg-danger link-underline link-underline-opacity-0" id="{{ comentary.id }}"  onclick="return confirm('Delete Comment with id {{ comentary.id }}')"">
+                                    Delete
+                                </a>
+                            </small>
+                            {% endif %}
+                        </div>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item list-group-item-action mb-3 shadow">
+                        <div class="d-flex w-100 justify-content-between">
+                            Belum ada Komentar
+                        </div>
+                    </li>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    </div>
 {% else %}
-<div class="card text-center">
-    <div class="card-body">
-        <p class="fs-2" >You Must Login As Admin User or Super User or Post Onwer</p>
+    <div class="card text-center">
+        <div class="card-body">
+            <p class="fs-2" >You Must Login As Admin User or Super User or Post Onwer</p>
+        </div>
     </div>
-</div>
 {% endif %}
 {% endblock konten %}
 
 {% block js %}
 <script>
+    $(document).ready(function () {
+        $('#cancel').hide();
+
+        $('.comment').click(function (e) { 
+            e.preventDefault();
+            var comment = $(this).attr('data');
+            var idcomment = $(this).attr('id')
+            $('#comment').val(comment);
+            $('form').attr('action', `?edit=${idcomment}`);
+            $('#cancel').show();
+        });
+
+        $('#cancel').click(function (e) { 
+            e.preventDefault();
+            $('#comment').val('');
+            $('form').attr('action', ``);
+            $('#cancel').hide();
+        });
+
+    });
     const tooltip = new bootstrap.Tooltip('span', {
         boundary: document.body // or document.querySelector('#boundary')
     })

@@ -21,18 +21,27 @@
         <h4 class="text-center">Selamat Datang {{ user }}</h4>
     </div>
 </div>
+
+<div class="card mb-3">
+    <div class="card-header">
+        <h4 class="text-center">Pencarian</h4>
+    </div>
+    <div class="card-body justify-content-center">
+        <div>
+            <form action="" method="get">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Cari" aria-label="Cari" aria-describedby="button-addon2" name="key" value="{{ request.GET.key }}">
+                    <input type="submit" value="Cari" class="btn btn-outline-secondary" type="button" id="button-addon2">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <div class="card mb-3">
     <div class="card-header d-flex justify-content-between">
         <div>
             <h5 class="text-center">Category</h5>
-        </div>
-        <div>
-            <form action="" method="get">
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="Cari" aria-label="Cari" aria-describedby="button-addon2" name="key" value="{{ request.GET.q }}">
-                    <input type="submit" value="Cari" class="btn btn-outline-secondary" type="button" id="button-addon2">
-                </div>
-            </form>
         </div>
         {% if posts.paginator.num_pages > 1 %}
         <div>
@@ -42,7 +51,10 @@
                 </button>
                 <ul class="dropdown-menu scrollable-menu" role="menu">
                     {% for page in posts.paginator.page_range %}
-                    <li><a class="dropdown-item" href="?page={{ page }}&key={{ request.GET.key }}">{{ page }}</a></li>
+                    <li><a class="dropdown-item" href="?page={{ page }}{% if request.GET.key != '' %}&key={{ request.GET.key }}{% endif %}">
+                            {{ page }}
+                        </a>
+                    </li>
                     {% endfor %}
                 </ul>
             </div>

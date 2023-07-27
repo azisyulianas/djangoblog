@@ -6,7 +6,8 @@ from django.shortcuts import redirect, render
 from django.utils.text import slugify
 from django.views import generic
 
-from blog.models import BlogPostModel, CategoryModel
+from users.models import UserPost
+from blog.models import BlogPostModel, CategoryModel, CommentModel
 
 
 # Blog Views for Blogs
@@ -61,13 +62,49 @@ class HomeViews(generic.View):
 class SingelPostViews(generic.View):
     template_name = "blogs/singlepost.html"
     modelBlog = BlogPostModel
-    konten = {}
+    
 
     def get(self, request, **kwargs):
-        post = self.modelBlog.objects.get(slug=kwargs['slug'])
-        self.konten['post']=post
+        post = BlogPostModel.objects.get(slug=kwargs['slug'])
+        comentaries = CommentModel.objects.filter(post=post).order_by('-createAt')
+        userpost = UserPost.objects.get(username=request.user)
 
-        return render(request, self.template_name, context=self.konten)
+        if 'delete' in  request.GET:
+            comment = CommentModel.objects.get(id=request.GET.get('delete'))
+            comment.delete()
+
+            return redirect("blog:detail", slug=kwargs['slug'])
+        
+        konten = {
+            'post':post,
+            'comentaries':comentaries,
+            'userpost':userpost
+        }
+
+        return render(request, self.template_name, context=konten)
+        # return dd(konten)
+        
+    def post(self, request, **kwargs):
+        post = BlogPostModel.objects.get(slug=kwargs['slug'])
+        userpost = UserPost.objects.get(username=request.user)
+        if 'edit' in request.GET:
+            comment = CommentModel.objects.get(id=request.GET.get('edit'))
+            comment.comment = request.POST.get('comment')
+            comment.post = post
+            comment.save()
+
+            return redirect("blog:detail", slug=kwargs['slug'])
+
+        comment = CommentModel(
+            comment=request.POST.get('comment'),
+            post=post,
+            user=userpost
+        )
+        comment.save()
+
+        return redirect("blog:detail", slug=kwargs['slug'])
+
+
     
 class CreateViews(LoginRequiredMixin, generic.View):
     login_url = "/"
@@ -144,7 +181,7 @@ class CreateViews(LoginRequiredMixin, generic.View):
         
        
 
-def delete(request, slug):
+def deletepost(request, slug):
     post = BlogPostModel.objects.get(slug=slug)
     if post.author == request.user or request.user.is_superuser or request.user.groups.filter(name='admin').exists():
         post.delete()
