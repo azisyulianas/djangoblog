@@ -67,7 +67,10 @@ class SingelPostViews(generic.View):
     def get(self, request, **kwargs):
         post = BlogPostModel.objects.get(slug=kwargs['slug'])
         comentaries = CommentModel.objects.filter(post=post).order_by('-createAt')
-        userpost = UserPost.objects.get(username=request.user)
+        
+        userpost = ""
+        if request.user.is_authenticated:
+            userpost = UserPost.objects.get(username=request.user)
 
         if 'delete' in  request.GET:
             comment = CommentModel.objects.get(id=request.GET.get('delete'))

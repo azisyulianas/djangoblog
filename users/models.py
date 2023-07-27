@@ -11,20 +11,22 @@ def content_file_name(instance, filename):
 # Create your models here.
 class UserPost(models.Model):
     username = models.OneToOneField(User, on_delete=models.CASCADE, related_name='useradd')
-    full_name = models.CharField(max_length=300, blank=True, editable=True)
-    alamat = models.TextField(blank=True, editable=True)
-    bio = models.TextField(blank=True, editable=True)
-    image = models.ImageField(upload_to=content_file_name, blank=True)
+    full_name = models.CharField(max_length=300, blank=True, editable=True, null=True)
+    alamat = models.TextField(blank=True, editable=True, null=True)
+    bio = models.TextField(blank=True, editable=True, null=True)
+    image = models.ImageField(upload_to=content_file_name, blank=True, null=True)
 
     def save(self):
+
         super().save()  # saving image first
-
-        img = Image.open(self.image.path) # Open image using self
-
-        if img.height > 300 or img.width > 300:
-            new_img = (300, 300)
-            img.thumbnail(new_img)
-            img.save(self.image.path)
+        if self.image != None:
+            img = Image.open(self.image.path) # Open image using self
+            print(img.height)
+            if img.height > 300 or img.width > 300:
+                new_img = (300, 300)
+                img.thumbnail(new_img)
+                img.save(self.image.path)
+                
         
         return super().save()
 

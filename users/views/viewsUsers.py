@@ -59,16 +59,18 @@ class UserEditViews(generic.View):
         name = request.POST.get('name')
         alamat = request.POST.get('alamat')
         bio = request.POST.get('bio')
+
         user.full_name = name
         user.alamat = alamat
         user.bio = bio
 
         if 'image' in request.FILES:
-            image_path = user.image.path
-            if os.path.exists(image_path):
-                os.remove(image_path)
-            user.image = request.FILES.get('image')
-            
+            if not user.image:
+                user.image = request.FILES.get('image')
+            elif os.path.exists(user.image.path):
+                os.remove(user.image.path)
+                user.image = request.FILES.get('image')
+
         user.save()
 
         return redirect('users:index', user=kwargs['user'])

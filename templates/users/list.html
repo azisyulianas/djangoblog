@@ -36,7 +36,7 @@ Users
                         <td>{{ usere.alamat }}</td>
                         <td>
                             <a href="{% url 'users:index' usere.username %}"><i class="fa-solid fa-eye"></i></a>
-                            {% if usere.username == user or request.user|has_group:"admin" or user.is_superuser %}
+                            {% if usere.username == user %}
                             <a href="{% url 'users:edit' usere.username %}"><i class="fa-solid fa-pen-to-square"></i></i></a>
                             {% if request.user|has_group:"admin" or user.is_superuser %}
                             <a href="#" onclick="return confirm('Delete Post {{ usere.username }}?.')"><i class="fa-solid fa-trash"></i></a>
