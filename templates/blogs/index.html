@@ -2,7 +2,7 @@
 
 
 {% block judul %}
-{{ judul }}
+{{ judul|title }}
 {% endblock judul %}
 
 {% block css %}
@@ -21,6 +21,23 @@
         <h4 class="text-center">Selamat Datang {{ user }}</h4>
     </div>
 </div>
+
+<div class="card mb-3">
+    <div class="card-header">
+        <h4 class="text-center">Pencarian</h4>
+    </div>
+    <div class="card-body justify-content-center">
+        <div>
+            <form action="" method="get">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Cari" aria-label="Cari" aria-describedby="button-addon2" name="key" value="{{ request.GET.key }}">
+                    <input type="submit" value="Cari" class="btn btn-outline-secondary" type="button" id="button-addon2">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <div class="card mb-3">
     <div class="card-header d-flex justify-content-between">
         <div>
@@ -34,7 +51,10 @@
                 </button>
                 <ul class="dropdown-menu scrollable-menu" role="menu">
                     {% for page in posts.paginator.page_range %}
-                    <li><a class="dropdown-item" href="?page={{ page }}">{{ page }}</a></li>
+                    <li><a class="dropdown-item" href="?page={{ page }}{% if request.GET.key != '' %}&key={{ request.GET.key }}{% endif %}">
+                            {{ page }}
+                        </a>
+                    </li>
                     {% endfor %}
                 </ul>
             </div>
@@ -60,11 +80,11 @@
 
 <div class="card">
     <div class="card-header">
-        {{ judul }}
+        {{ judul|title }}
     </div>
     <div class="card-body">
         <div class="list-group">
-        {% for post in posts.paginator.object_list %}
+        {% for post in posts %}
             <li class="list-group-item list-group-item-action mb-3 shadow">
                 <div class="d-flex w-100 justify-content-between">
                     <a href="{% url 'blog:detail' post.slug %}" class="link-underline link-underline-opacity-0 link-body-emphasis">{{ post.title }}</a>
@@ -74,7 +94,7 @@
                     by <a href="{% url 'users:index' post.author %}" class="link-underline link-underline-opacity-0 link-secondary">
                         {{ post.author}}
                     </a> 
-                    in <a href="{% url 'blog:category' post.category.name %}" class="link-underline link-underline-opacity-0 link-secondary">
+                    in <a href="{% url 'blog:category' post.category.slug %}" class="link-underline link-underline-opacity-0 link-secondary">
                         {{ post.category.name }}
                     </a>
                 </small>

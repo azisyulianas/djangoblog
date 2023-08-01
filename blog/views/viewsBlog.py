@@ -6,7 +6,8 @@ from django.shortcuts import redirect, render
 from django.utils.text import slugify
 from django.views import generic
 
-from blog.models import BlogPostModel, CategoryModel
+from users.models import UserPost
+from blog.models import BlogPostModel, CategoryModel, CommentModel
 
 
 # Blog Views for Blogs
@@ -23,26 +24,28 @@ class HomeViews(generic.View):
     def get(self, request, **kwargs):
         page = 1
         paginator = 10
-
+        category=None
+        search=None
         if request.GET.get('page') != None:
             page = request.GET.get('page')
 
-        posts = self.modelBlog.objects.filter(is_publish=True).order_by('-createAt')
+        if request.GET.get('key') != None:
+            search = request.GET.get('key')  
+
+        posts = BlogPostModel.objects.cari(category=category, key=search)
 
         if 'category' in kwargs:
-            posts = self.modelBlog\
-                    .objects\
-                    .filter(category__slug=kwargs['category'], is_publish=True)\
-                    .order_by('-createAt')
+            category = kwargs["category"]
+            posts = BlogPostModel.objects.cari(category=category, key=search)
             posts_pagi = Paginator(posts, paginator)
 
             if posts_pagi.num_pages >= int(page) and int(page)>0:
-                self.konten['judul']=f'Posts by category {kwargs["category"]}'
+                self.konten['judul']=f'Posts by category {category}'
                 self.konten['posts']= posts_pagi.page(page)
 
                 return render(request, self.template_name, context=self.konten)
             else:
-                return HttpResponse(f'Total Page Count Is Less Than Page or Less Than Zero')
+                return HttpResponse(f'Total Page Count is Less Than Page or Page is Less Than Zero')
 
         posts_pagi = Paginator(posts, paginator)
 
@@ -52,20 +55,59 @@ class HomeViews(generic.View):
         
             return render(request, self.template_name, context=self.konten)
         else:
-            return HttpResponse(f'Total Page Count Is Less Than Page or Less Than Zero')
+            return HttpResponse(f'Total Page Count is Less Than Page or Page is Less Than Zero')
 
         
 
 class SingelPostViews(generic.View):
     template_name = "blogs/singlepost.html"
     modelBlog = BlogPostModel
-    konten = {}
+    
 
     def get(self, request, **kwargs):
-        post = self.modelBlog.objects.get(slug=kwargs['slug'])
-        self.konten['post']=post
+        post = BlogPostModel.objects.get(slug=kwargs['slug'])
+        comentaries = CommentModel.objects.filter(post=post).order_by('-createAt')
+        
+        userpost = ""
+        if request.user.is_authenticated:
+            userpost = UserPost.objects.get(username=request.user)
 
-        return render(request, self.template_name, context=self.konten)
+        if 'delete' in  request.GET:
+            comment = CommentModel.objects.get(id=request.GET.get('delete'))
+            comment.delete()
+
+            return redirect("blog:detail", slug=kwargs['slug'])
+        
+        konten = {
+            'post':post,
+            'comentaries':comentaries,
+            'userpost':userpost
+        }
+
+        return render(request, self.template_name, context=konten)
+        # return dd(konten)
+        
+    def post(self, request, **kwargs):
+        post = BlogPostModel.objects.get(slug=kwargs['slug'])
+        userpost = UserPost.objects.get(username=request.user)
+        if 'edit' in request.GET:
+            comment = CommentModel.objects.get(id=request.GET.get('edit'))
+            comment.comment = request.POST.get('comment')
+            comment.post = post
+            comment.save()
+
+            return redirect("blog:detail", slug=kwargs['slug'])
+
+        comment = CommentModel(
+            comment=request.POST.get('comment'),
+            post=post,
+            user=userpost
+        )
+        comment.save()
+
+        return redirect("blog:detail", slug=kwargs['slug'])
+
+
     
 class CreateViews(LoginRequiredMixin, generic.View):
     login_url = "/"
@@ -142,7 +184,7 @@ class CreateViews(LoginRequiredMixin, generic.View):
         
        
 
-def delete(request, slug):
+def deletepost(request, slug):
     post = BlogPostModel.objects.get(slug=slug)
     if post.author == request.user or request.user.is_superuser or request.user.groups.filter(name='admin').exists():
         post.delete()

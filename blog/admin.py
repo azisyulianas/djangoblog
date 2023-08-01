@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import CategoryModel, BlogPostModel
+from .models import CategoryModel, BlogPostModel, CommentModel
 
 class ReadOnlyBlog(admin.ModelAdmin):
     readonly_fields = [
@@ -15,5 +15,13 @@ class ReadOnlyCategory(admin.ModelAdmin):
         'slug',
     ]
 
+class ReadOnlyComment(admin.ModelAdmin):
+    readonly_fields = [
+        'createAt',
+        'updateAt',
+        'is_edited',
+    ]
+
 admin.site.register(CategoryModel, ReadOnlyCategory)
 admin.site.register(BlogPostModel, ReadOnlyBlog)
+admin.site.register(CommentModel, ReadOnlyComment)

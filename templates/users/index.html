@@ -12,23 +12,42 @@ User | {{ users.username }}
         Keterangan User {{ users.username }}
     </div>
     <div class="card-body">
-        <table>
-            <tr>
-                <th>username</th>
-                <td>: {{ users.username }}</td>
-            </tr>
-            <tr>
-                <th>Nama</th>
-                <td>:{% if users.full_name %} {{ users.full_name }} {% else %} {% endif %}</td>
-            </tr>
-            <tr>
-                <th>Alamat</th>
-                <td>: {% if users.alamat %} {{ users.alamat }} {% else %} {% endif %}</td>
-            </tr>
-        </table>
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <div>
+                    {% if users.image %}
+                        <img src="{{ users.image.url }}" alt="{{ users.username }}">
+                    {% else %}
+                        <img src="https://storage.ko-fi.com/cdn/useruploads/display/39d7fa2f-9353-4cb1-91f9-7c5c1c2d4f61_0f217d0189f841ae794500966ab1845a.jpg" alt="{{ users.username }}" width="300pt" height="300pt">
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div>
+                    <table>
+                        <tr>
+                            <th>username</th>
+                            <td>: {{ users.username }}</td>
+                        </tr>
+                        <tr>
+                            <th>Nama</th>
+                            <td>:{% if users.full_name %} {{ users.full_name }} {% else %} {% endif %}</td>
+                        </tr>
+                        <tr>
+                            <th>Alamat</th>
+                            <td>: {% if users.alamat %} {{ users.alamat }} {% else %} {% endif %}</td>
+                        </tr>
+                        <tr>
+                            <th>Bio</th>
+                            <td>: {% if users.bio %} {{ users.bio }} {% else %} {% endif %}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="card-footer">
-        {% if 'admin' in user.groups.all.0.name or user.is_superuser or users.username == user %}
+        {% if users.username == user %}
         <a href="{% url 'users:edit' users.username %}" class="btn btn-primary">Edit</a>
         {% endif %}
     </div>
@@ -79,7 +98,7 @@ User | {{ users.username }}
                     </td>
                     <td>
                         <a href="{% url 'blog:detail' post.slug %}"><i class="fa-solid fa-eye"></i></a>
-                        {% if request.user|has_group:"admin" or user.is_superuser or users.username == user %}
+                        {% if users.username == user %}
                         <a href="{% url 'blog:edit' post.slug %}"><i class="fa-solid fa-pen-to-square"></i></i></a>
                         <a href="{% url 'blog:delete' post.slug %}" onclick="return confirm('Delete Post {{ post.title }}?.')"><i class="fa-solid fa-trash"></i></a>
                         {% endif %}

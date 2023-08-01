@@ -15,36 +15,39 @@ Users
         {% if request.user|has_group:"admin" or user.is_superuser %}
         <a href="{% url 'users:create' %}" class="btn btn-primary">Tambah User</a>
         {% endif %}
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Username</th>
-                    <th>Nama</th>
-                    <th>Alamat</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for usere in users %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ usere.username }}</td>
-                    <td>{{ usere.full_name }}</td>
-                    <td>{{ usere.alamat }}</td>
-                    <td>
-                        <a href="{% url 'users:index' usere.username %}"><i class="fa-solid fa-eye"></i></a>
-                        {% if usere.username == user or request.user|has_group:"admin" or user.is_superuser %}
-                        <a href="{% url 'users:edit' usere.username %}"><i class="fa-solid fa-pen-to-square"></i></i></a>
-                        {% if request.user|has_group:"admin" or user.is_superuser %}
-                        <a href="#" onclick="return confirm('Delete Post {{ usere.username }}?.')"><i class="fa-solid fa-trash"></i></a>
-                        {% endif %}
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-hover caption-top">
+                <caption>List of users</caption>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Username</th>
+                        <th>Nama</th>
+                        <th>Alamat</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for usere in users %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ usere.username }}</td>
+                        <td>{{ usere.full_name }}</td>
+                        <td>{{ usere.alamat }}</td>
+                        <td>
+                            <a href="{% url 'users:index' usere.username %}"><i class="fa-solid fa-eye"></i></a>
+                            {% if usere.username == user %}
+                            <a href="{% url 'users:edit' usere.username %}"><i class="fa-solid fa-pen-to-square"></i></i></a>
+                            {% if request.user|has_group:"admin" or user.is_superuser %}
+                            <a href="#" onclick="return confirm('Delete Post {{ usere.username }}?.')"><i class="fa-solid fa-trash"></i></a>
+                            {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock konten %}
